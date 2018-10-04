@@ -1,0 +1,4 @@
+# WITH_SERVER=y
+# WITH_SSH1=y
+# _MSC_VER=y
+# _WIN32=n

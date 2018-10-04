@@ -1,0 +1,6 @@
+# DEBUG_CRYPTO=y
+# HAVE_LIBCRYPTO=y
+# HAVE_LIBGCRYPT=n
+# P_LEN=y
+# P_LEN.=y
+# _WIN32=n

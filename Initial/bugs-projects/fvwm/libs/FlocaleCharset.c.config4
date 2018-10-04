@@ -1,0 +1,8 @@
+# CT_ENTRY=y
+# CT_ENTRY.=y
+# CT_ENTRY..=y
+# CT_ENTRY...=y
+# FLOCALE_DEBUG_CHARSET=y
+# FiconvSupport=n
+# HAVE_BIDI=y
+# HAVE_XOUTPUT_METHOD=y

@@ -1,0 +1,5 @@
+# Z_PREFIX_SET=y
+# gzgetc=y
+# gzgetc.=y
+# z_gzgetc=y
+# z_gzgetc.=n

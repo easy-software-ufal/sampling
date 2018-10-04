@@ -1,0 +1,10 @@
+# ENABLE_FEATURE_SYSLOG=y
+# VERSION_WITH_WRITEV=y
+# msgc=y
+# msgc.=y
+# msgptr=y
+# msgptr.=y
+# msgv=y
+# msgv.=y
+# used=y
+# used.=y
