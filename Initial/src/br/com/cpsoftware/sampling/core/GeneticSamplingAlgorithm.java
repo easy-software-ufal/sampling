@@ -95,15 +95,15 @@ public class GeneticSamplingAlgorithm extends SamplingAlgorithm {
 		Collections.sort(configuration1, strCompa);
 		Collections.sort(configuration2, strCompa);
 		
-		System.out.println("Parent 1: " + configuration1);
-		System.out.println("Parent 2: " + configuration2);
+		//System.out.println("Parent 1: " + configuration1);
+		//System.out.println("Parent 2: " + configuration2);
 		
 		Random r = new Random();
 		int low = 1;
 		int high = configuration1.size();
 		int result = r.nextInt(high-low) + low;
 		
-		System.out.println("Partition: " + result);
+		//System.out.println("Partition: " + result);
 		
 		List<String> newConfig1 = new ArrayList<>();
 		for (int i = 0; i < result; i++) {
@@ -136,24 +136,24 @@ public class GeneticSamplingAlgorithm extends SamplingAlgorithm {
 	
 	public List<String> mutation(List<String> configuration, double percentual){
 		
-		int changes = (int)(configuration.size() * percentual);
+		//int changes = (int)(configuration.size() * percentual);
 		
-		for (int i = 1; i <= changes; i++) {
-			Random r = new Random();
-			int low = 0;
-			int high = configuration.size()-1;
-			int result = r.nextInt(high-low) + low;
-			
-			String currentValue = configuration.get(result);
-			String newValue = "";
-			if (currentValue.startsWith("!")) {
-				newValue = currentValue.replace("!", "");
-			} else {
-				newValue = "!" + currentValue;
-			}
-			
-			configuration.set(result, newValue);
+		//for (int i = 1; i <= changes; i++) {
+		Random r = new Random();
+		int low = 0;
+		int high = configuration.size()-1;
+		int result = r.nextInt(high-low) + low;
+		
+		String currentValue = configuration.get(result);
+		String newValue = "";
+		if (currentValue.startsWith("!")) {
+			newValue = currentValue.replace("!", "");
+		} else {
+			newValue = "!" + currentValue;
 		}
+		
+		configuration.set(result, newValue);
+		//}
 		return configuration;
 	}
 	
@@ -173,6 +173,28 @@ public class GeneticSamplingAlgorithm extends SamplingAlgorithm {
 		
 		Iterator<Map.Entry<List<String>,Double>> it = sorted.entrySet().iterator();
 	    while (it.hasNext() && selectedConfigurations.size() <= limitSize) {
+	        Map.Entry<List<String>,Double> pair = (Map.Entry<List<String>,Double>)it.next();
+	        selectedConfigurations.add(pair.getKey());
+	        it.remove();
+	    }
+		
+		return selectedConfigurations;
+	}
+	
+	public List<List<String>> selectBest(File file, List<List<String>> samples, int number) throws Exception {
+		Map<List<String>, Double> configurations = new HashMap<>();
+
+		for (int i = 0; i < samples.size(); i++) {
+			List<String> sample = samples.get(i);
+			configurations.put(sample, this.getScoreFunctionValue(file, sample));
+		}
+
+		Map<List<String>, Double> sorted = sortByComparator(configurations, false);
+
+		List<List<String>> selectedConfigurations = new ArrayList<>();
+		
+		Iterator<Map.Entry<List<String>,Double>> it = sorted.entrySet().iterator();
+	    while (it.hasNext() && selectedConfigurations.size() <= number) {
 	        Map.Entry<List<String>,Double> pair = (Map.Entry<List<String>,Double>)it.next();
 	        selectedConfigurations.add(pair.getKey());
 	        it.remove();
