@@ -14,7 +14,7 @@ public abstract class SamplingAlgorithm {
 	
 	public abstract List<List<String>> getSamples(File file) throws Exception;
 	
-	public boolean isValidJavaIdentifier(String s) {
+	public static boolean isValidJavaIdentifier(String s) {
 		// An empty or null string cannot be a valid identifier.
 	    if (s == null || s.length() == 0){
 	    	return false;
@@ -35,7 +35,7 @@ public abstract class SamplingAlgorithm {
 	}
 	
 	// It sets the number of configurations..
-	public List<String> getDirectives(File file) throws Exception{
+	public static List<String> getDirectives(File file) throws Exception{
 		List<String> directives = new ArrayList<>();
 		
 		FileInputStream fstream = new FileInputStream(file);
@@ -63,7 +63,7 @@ public abstract class SamplingAlgorithm {
 				String[] directivesStr = directive.split(" ");
 				
 				for (int i = 0; i < directivesStr.length; i++){
-					if (!directives.contains(directivesStr[i].trim()) && !directivesStr[i].trim().equals("") && this.isValidJavaIdentifier(directivesStr[i].trim())){
+					if (!directives.contains(directivesStr[i].trim()) && !directivesStr[i].trim().equals("") && isValidJavaIdentifier(directivesStr[i].trim())){
 						directives.add(directivesStr[i].trim());
 					}
 				}
@@ -90,7 +90,7 @@ public abstract class SamplingAlgorithm {
 		return directives;
 	}
 	
-	public <T> List<List<T>> powerSet(List<T> originalSet) {
+	public static <T> List<List<T>> powerSet(List<T> originalSet) {
 		List<List<T>> sets = new ArrayList<List<T>>();
 		if (originalSet.isEmpty()) {
 			sets.add(new ArrayList<T>());

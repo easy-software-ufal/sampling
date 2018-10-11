@@ -54,7 +54,7 @@ public class GeneticSamplingAlgorithm extends SamplingAlgorithm {
 		
 		System.out.println("\n\nMutation\n");
 		System.out.println("Original: " + initialPopulation.get(0));
-		System.out.println("Mutant: " + ga.mutation(initialPopulation.get(0), 0.2));
+		System.out.println("Mutant: " + ga.mutation(initialPopulation.get(0)));
 		
 		System.out.println("\n\nCrossing\n");
 		
@@ -82,6 +82,12 @@ public class GeneticSamplingAlgorithm extends SamplingAlgorithm {
 	public List<List<String>> crossing(List<String> configuration1, List<String> configuration2) {
 		List<List<String>> childs = new ArrayList<>();
 		
+		if (configuration1.size() == 0 || configuration1.size() == 1) {
+			childs.add(configuration1);
+			childs.add(configuration2);
+			return childs;
+		}
+		
 		Comparator<String> strCompa = new Comparator<String>() {
 
 			@Override
@@ -95,15 +101,10 @@ public class GeneticSamplingAlgorithm extends SamplingAlgorithm {
 		Collections.sort(configuration1, strCompa);
 		Collections.sort(configuration2, strCompa);
 		
-		//System.out.println("Parent 1: " + configuration1);
-		//System.out.println("Parent 2: " + configuration2);
-		
 		Random r = new Random();
 		int low = 1;
 		int high = configuration1.size();
 		int result = r.nextInt(high-low) + low;
-		
-		//System.out.println("Partition: " + result);
 		
 		List<String> newConfig1 = new ArrayList<>();
 		for (int i = 0; i < result; i++) {
@@ -115,10 +116,6 @@ public class GeneticSamplingAlgorithm extends SamplingAlgorithm {
 		}
 		
 		childs.add(newConfig1);
-		
-		//low = configuration1.size() / 2;
-		//high = configuration1.size();
-		//result = r.nextInt(high-low) + low;
 		
 		List<String> newConfig2 = new ArrayList<>();
 		for (int i = 0; i < result; i++) {
@@ -134,7 +131,23 @@ public class GeneticSamplingAlgorithm extends SamplingAlgorithm {
 		return childs;
 	}
 	
-	public List<String> mutation(List<String> configuration, double percentual){
+	public List<String> mutation(List<String> configuration){
+		
+		if (configuration.size() == 0) {
+			return configuration;
+		}
+		
+		if (configuration.size() == 1) {
+			String currentValue = configuration.get(0);
+			String newValue = "";
+			if (currentValue.startsWith("!")) {
+				newValue = currentValue.replace("!", "");
+			} else {
+				newValue = "!" + currentValue;
+			}
+			configuration.set(0, newValue);
+			return configuration;
+		}
 		
 		//int changes = (int)(configuration.size() * percentual);
 		
@@ -219,7 +232,7 @@ public class GeneticSamplingAlgorithm extends SamplingAlgorithm {
 			}
 		};
 
-		checker.checkhSampling(singleConfiguration);
+		checker.checkSampling(singleConfiguration, file);
 
 		return checker.bugs;
 	}

@@ -22,7 +22,7 @@ public class TwiseSampling extends SamplingAlgorithm {
 	@Override
 	public List<List<String>> getSamples(File file) throws Exception {
 		List<List<String>> configurations = new ArrayList<>();
-		directives = this.getDirectives(file);
+		directives = SamplingAlgorithm.getDirectives(file);
 		Collections.sort(directives);
 		
 		FileInputStream fstream = new FileInputStream("tables/" + t + "x2/ca." + t + ".2^" + directives.size() + ".txt");

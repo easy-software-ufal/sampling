@@ -23,7 +23,7 @@ public class BugsChecker {
 		checker.configurations = 0;
 		checker.bugs = 0;
 		System.out.println("One-Enabled Sampling");
-		checker.checkhSampling(new OneEnabledSampling());
+		checker.checkSampling(new OneEnabledSampling());
 		double end = System.currentTimeMillis();
 		System.out.println("Time: " + (end-start) + "\n");
 		
@@ -93,7 +93,7 @@ public class BugsChecker {
 		System.out.println("Time: " + (end-start) + "\n");*/
 	}
 
-	public void checkhSampling(SamplingAlgorithm algorithm) throws Exception{
+	public void checkSampling(SamplingAlgorithm algorithm) throws Exception{
 		File inputWorkbook = new File("bugs.xls");
 		Workbook w = Workbook.getWorkbook(inputWorkbook);
 		Sheet sheet = w.getSheet(0);
@@ -137,6 +137,80 @@ public class BugsChecker {
 		
 	}
 	
+	
+	public void checkSampling(SamplingAlgorithm algorithm, File file) throws Exception{
+		File inputWorkbook = new File("bugs.xls");
+		Workbook w = Workbook.getWorkbook(inputWorkbook);
+		Sheet sheet = w.getSheet(0);
+		
+		String project, path, presenceCondition = null;
+		
+		for (int i = 0; i < sheet.getRows(); i++) {
+			
+			project = sheet.getCell(0, i).getContents();
+			path = sheet.getCell(3, i).getContents();
+			presenceCondition = sheet.getCell(4, i).getContents();
+			
+			File lineFile = new File(BugsChecker.SOURCE_LOCATION + project + "/" + path);
+			if (!lineFile.getAbsolutePath().equals(file.getAbsolutePath())) {
+				continue;
+			}
+			
+			presenceCondition = presenceCondition.replaceAll("\\s", "");
+			String[] options = presenceCondition.split("\\)\\|\\|\\(");
+			boolean detected = false;
+			
+			for (String option : options){
+				String[] macros = option.split("&&");
+				
+				this.checkingMissingMacros(new File(BugsChecker.SOURCE_LOCATION + project + "/" + path), macros);
+				
+				List<List<String>> samplings = algorithm.getSamples(new File(BugsChecker.SOURCE_LOCATION + project + "/" + path));
+				this.configurations += samplings.size();
+				
+				detected = this.doesSamplingWork(macros, samplings);
+				if (detected){
+					bugs++;
+					break;
+				}	
+			}
+		}
+		
+		// It counts the number of configurations in C source files without faults.
+		this.listAllFiles(new File("code"), algorithm);
+		
+		//System.out.println("Bugs: " + bugs);
+		//System.out.println("Configurations: " + configurations);
+		
+		// Total number of configuration / total number of files in all projects.
+		//System.out.println("Configurations per file:" + ((double)configurations)/50078);
+		
+	}
+	
+	public int getNumberOfBug(File file) throws Exception{
+		File inputWorkbook = new File("bugs.xls");
+		Workbook w = Workbook.getWorkbook(inputWorkbook);
+		Sheet sheet = w.getSheet(0);
+		
+		String project, path = null;
+		
+		int bugs = 0;
+		
+		for (int i = 0; i < sheet.getRows(); i++) {
+			
+			project = sheet.getCell(0, i).getContents();
+			path = sheet.getCell(3, i).getContents();
+			
+			File lineFile = new File(BugsChecker.SOURCE_LOCATION + project + "/" + path);
+			if (lineFile.getAbsolutePath().equals(file.getAbsolutePath())) {
+				bugs++;
+			} 
+			
+			
+		}
+		return bugs;
+	}
+	
 	public void listAllFiles(File path, SamplingAlgorithm algorithm) throws Exception{
 		if (path.isDirectory()){
 			for (File file : path.listFiles()){
@@ -172,7 +246,7 @@ public class BugsChecker {
 		
 		SamplingAlgorithm pairwise = new OneDisabledSampling();
 		pairwise.getSamples(file);
-		List<String> directives = pairwise.getDirectives(file);
+		List<String> directives = SamplingAlgorithm.getDirectives(file);
 		
 		for (String macro : macros){
 			macro = macro.replace("!", "").replace("(", "").replace(")", "");

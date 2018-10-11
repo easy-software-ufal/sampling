@@ -11,7 +11,7 @@ public class OneDisabledSampling extends SamplingAlgorithm{
 	@Override
 	public List<List<String>> getSamples(File file) throws Exception {
 		List<List<String>> configurations = new ArrayList<>();
-		directives = this.getDirectives(file);
+		directives = SamplingAlgorithm.getDirectives(file);
 		
 		// It activates one macro at time separately..
 		for (int i = 0; i < (directives.size()); i++){

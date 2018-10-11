@@ -16,7 +16,7 @@ public class StmtCoverageSampling extends SamplingAlgorithm {
 	@Override
 	public List<List<String>> getSamples(File file) throws Exception {
 		List<List<String>> configurations = new ArrayList<>();
-		directives = this.getDirectives(file);
+		directives = SamplingAlgorithm.getDirectives(file);
 		
 		new ProcessBuilder("undertaker", "-j", "coverage", file.getAbsolutePath()).start();
 		
