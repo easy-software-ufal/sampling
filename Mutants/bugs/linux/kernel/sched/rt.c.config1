@@ -1,0 +1,11 @@
+CONFIG_RT_GROUP_SCHED=y
+CONFIG_SCHED_DEBUG=y
+CONFIG_SMP=y
+# RT_MAX_TRIES=y
+# RT_MAX_TRIES.=y
+# for_each_rt_rq=y
+# for_each_rt_rq.=y
+# for_each_sched_rt_entity=y
+# for_each_sched_rt_entity.=y
+# rt_entity_is_task=y
+# rt_entity_is_task.=y

@@ -1,0 +1,10 @@
+CONFIG_CPUMASK_OFFSTACK=y
+CONFIG_HOTPLUG_CPU=n
+CONFIG_NUMA=n
+CONFIG_X86_32=n
+CONFIG_X86_BIGSMP=n
+CONFIG_X86_IO_APIC=y
+# get_idle_for_cpu=y
+# get_idle_for_cpu.=y
+# set_idle_for_cpu=y
+# set_idle_for_cpu.=y

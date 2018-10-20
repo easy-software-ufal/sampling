@@ -1,0 +1,5 @@
+# ENABLE_NC=y
+# ENABLE_NC_110_COMPAT=n
+# ENABLE_NC_EXTRA=y
+# iobuf=y
+# iobuf.=y

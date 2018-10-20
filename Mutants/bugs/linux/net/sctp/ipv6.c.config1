@@ -1,0 +1,4 @@
+CONFIG_COMPAT=y
+# IPV6=y
+# IP_SCTP=y
+# SCTP_DBG_MSG=y

@@ -1,0 +1,3 @@
+# APR_HAS_ANSI_FS=y
+# APR_HAS_UNICODE_FS=y
+# WIN32=y

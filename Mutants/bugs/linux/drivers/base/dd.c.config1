@@ -1,0 +1,4 @@
+# I2C=y
+# IRQ_DOMAIN=y
+# OF_IRQ=y
+# TWL4030_CORE=y

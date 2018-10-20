@@ -1,0 +1,5 @@
+CONFIG_PPC64=y
+# BDI_SWITCH=y
+# KGDB=y
+# KPROBES=y
+# XMON=y

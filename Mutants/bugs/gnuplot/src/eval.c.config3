@@ -1,0 +1,15 @@
+# APOLLO=y
+# DJGPP=y
+# DOS386=y
+# DOSX286=n
+# E_MINEXP=n
+# GP_STRING_VARS=y
+# MSDOS=y
+# NeXT=y
+# WIN32=y
+# _Windows=y
+# __EMX__=y
+# lint=n
+# top_of_stack=y
+# top_of_stack.=y
+# ultrix=y
