@@ -16,14 +16,17 @@ public class GA {
 	public static int count = 0;
 	public static int generation = 0;
 	public static double score = 0;
-	public static String lastFile = null;
+	public static String lastFile = "nothing!";
 	
 	public static void main(String[] args) throws Exception {
 		File folder = new File("bugs");
 		GA ga = new GA();
 		
 		ga.listFilesForFolder(folder);
-		
+		System.out.println("------------");
+		ga.listFilesForFolder(folder);
+		System.out.println("------------");
+		ga.listFilesForFolder(folder);
 		
 		/*SamplingAlgorithm oneDisabled = new OneDisabledSampling();
 		List<SamplingAlgorithm> algorithms = new ArrayList<>();
@@ -53,8 +56,8 @@ public class GA {
 	        		algorithms.add(pairwise);
 	        		
 	        		double start = System.currentTimeMillis();
-	        		// ELITISM / MUTATION
-	        		new GA().runGA(algorithms, fileEntry, false, 0.3, 0.3);
+	        		// ELITISM / MUTATION // TRUE FOR RANDOM
+	        		new GA().runGA(algorithms, fileEntry, false, 0.2, 0.3);
 	        		double end = System.currentTimeMillis();
 	        		System.out.print((int)(end-start) + "\n");
 	        	}
@@ -210,6 +213,7 @@ public class GA {
 						GA.generation = interaction;
 						GA.score = score;
 						System.out.print(file.getName() + ", " + interaction + ", " + ((int)new BugsChecker().getNumberOfBug(file)) + ", " + ((int)GA.score) + ", ");
+						lastFile = file.getName();
 					}
 					
 					// We found something better
@@ -217,10 +221,12 @@ public class GA {
 						GA.generation = interaction;
 						GA.score = score;
 					} else {
-						if (GA.generation + 5 <= interaction) {
+						if (GA.generation + 5 <= interaction && print) {
 							//System.out.println("Not converging..");
 							System.out.print(file.getName() + ", " + interaction + ", " + ((int)new BugsChecker().getNumberOfBug(file)) + ", " + ((int)GA.score) + ", ");
 							bugDetected = true;
+							lastFile = file.getName();
+							print = false;
 						}
 					}
 					
@@ -229,8 +235,6 @@ public class GA {
 				currentPopulation = newPopulation;
 				//System.out.println();
 			}
-			
-			lastFile = file.getName();
 			
 		}
 		
