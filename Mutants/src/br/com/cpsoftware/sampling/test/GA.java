@@ -41,22 +41,34 @@ public class GA {
 	            listFilesForFolder(fileEntry);
 	        } else {
 	        	if (!fileEntry.getName().startsWith(".") && fileEntry.getName().endsWith(".c")) {
+
+	        		List<SamplingAlgorithm> algorithms = new ArrayList<>();
 	        		
+	        		// Algoritmos que juntos formam o LSA!!
 	        		//SamplingAlgorithm oneDisabled = new OneDisabledSampling();
 	        		//SamplingAlgorithm oneEnabled = new OneEnabledSampling();
 	        		//SamplingAlgorithm allEnabledDisabled = new AllEnabledDisabledSampling();
-	        		
+	
+	        		// Algoritmo que forma o pairwise!
 	        		SamplingAlgorithm pairwise = new TwiseSampling(2);
 	        		
-	        		List<SamplingAlgorithm> algorithms = new ArrayList<>();
+
+	        		// Adicionando algoritmos para LSA!!
 	        		//algorithms.add(oneDisabled);
 	        		//algorithms.add(oneEnabled);
 	        		//algorithms.add(allEnabledDisabled);
 	        		
+	        		// Adicionando algoritmos para Pairwise!!
 	        		algorithms.add(pairwise);
 	        		
+	        		// Pro Random é tudo comentado... Ele é definido na função abaixo!!
+	        		
 	        		double start = System.currentTimeMillis();
+
 	        		// ELITISM / MUTATION // TRUE FOR RANDOM
+	        				
+	        		// SETAR "TRUE" PARA O SER RANDOM
+	        		// TAXA DE ELITISMO, TAXA DE MUTATION
 	        		new GA().runGA(algorithms, fileEntry, false, 0.2, 0.3);
 	        		double end = System.currentTimeMillis();
 	        		System.out.print((int)(end-start) + "\n");
