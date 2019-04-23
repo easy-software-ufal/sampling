@@ -1,13 +1,19 @@
 package br.com.cpsoftware.sampling.test;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import br.com.cpsoftware.sampling.core.GeneticSamplingAlgorithm;
 import br.com.cpsoftware.sampling.core.SamplingAlgorithm;
+import br.com.cpsoftware.sampling.core.algorithms.AllEnabledDisabledSampling;
+import br.com.cpsoftware.sampling.core.algorithms.OneDisabledSampling;
+import br.com.cpsoftware.sampling.core.algorithms.OneEnabledSampling;
 import br.com.cpsoftware.sampling.core.algorithms.RandomSampling;
+import br.com.cpsoftware.sampling.core.algorithms.RandomSamplingLSA;
+import br.com.cpsoftware.sampling.core.algorithms.RandomSamplingPairwise;
 import br.com.cpsoftware.sampling.core.algorithms.TwiseSampling;
 
 public class GA {
@@ -15,10 +21,18 @@ public class GA {
 	public static int count = 0;
 	
 	public static void main(String[] args) throws Exception {
-		File folder = new File("bugs");
-		GA ga = new GA();
-		
-		ga.listFilesForFolder(folder);
+			
+		for (int i = 1; i <= 10; i++) {
+			PrintStream fileOut = new PrintStream("exec-" + i + ".csv");
+			System.setOut(fileOut);
+			
+			System.out.println("algorithm,file,elitism,mutation,interaction,time(ms)");
+			
+			File folder = new File("bugs");
+			GA ga = new GA();
+			
+			ga.listFilesForFolder(folder);
+		}
 		
 		
 		/*SamplingAlgorithm oneDisabled = new OneDisabledSampling();
@@ -35,24 +49,85 @@ public class GA {
 	        } else {
 	        	if (!fileEntry.getName().startsWith(".") && fileEntry.getName().endsWith(".c")) {
 	        		
-	        		//SamplingAlgorithm oneDisabled = new OneDisabledSampling();
-	        		//SamplingAlgorithm oneEnabled = new OneEnabledSampling();
-	        		//SamplingAlgorithm allEnabledDisabled = new AllEnabledDisabledSampling();
+	        		List<List<SamplingAlgorithm>> algorithmsList = new ArrayList<List<SamplingAlgorithm>>();
 	        		
-	        		SamplingAlgorithm pairwise = new TwiseSampling(2);
+	        		//LSA
+	        		SamplingAlgorithm oneDisabled = new OneDisabledSampling();
+	        		SamplingAlgorithm oneEnabled = new OneEnabledSampling();
+	        		SamplingAlgorithm allEnabledDisabled = new AllEnabledDisabledSampling();
 	        		
-	        		List<SamplingAlgorithm> algorithms = new ArrayList<>();
-	        		//algorithms.add(oneDisabled);
-	        		//algorithms.add(oneEnabled);
-	        		//algorithms.add(allEnabledDisabled);
+	        		List<SamplingAlgorithm> lsa = new ArrayList<>();
+	        		lsa.add(oneDisabled);
+	        		lsa.add(oneEnabled);
+	        		lsa.add(allEnabledDisabled);
 	        		
-	        		algorithms.add(pairwise);
+	        		algorithmsList.add(lsa);
 	        		
-	        		double start = System.currentTimeMillis();
-	        		// ELITISM / MUTATION
-	        		new GA().runGA(algorithms, fileEntry, true, 0.3, 0.1);
-	        		double end = System.currentTimeMillis();
-	        		System.out.print((int)(end-start) + "\n");
+	        		//PAIRWISE
+	        		List<SamplingAlgorithm> pairwise = new ArrayList<>();
+	        		pairwise.add(new TwiseSampling(2));
+	        		algorithmsList.add(pairwise);
+	        		
+	        		//RANDOM SAMPLING LSA
+	        		List<SamplingAlgorithm> randomSamplingLSA = new ArrayList<>();
+	        		randomSamplingLSA.add(new RandomSamplingLSA());
+	        		algorithmsList.add(randomSamplingLSA);
+	        		
+	        		//RANDOM SAMPLING PAIRWISE
+	        		List<SamplingAlgorithm> randomSamplingPairwise = new ArrayList<>();
+	        		randomSamplingPairwise.add(new RandomSamplingPairwise());
+	        		algorithmsList.add(randomSamplingPairwise);
+	        		
+	        		List<Double> elistismLst = new ArrayList<Double>();
+	        		elistismLst.add(0.1);
+	        		elistismLst.add(0.2);
+	        		elistismLst.add(0.3);
+	        		
+	        		List<Double> mutationLst = new ArrayList<Double>();
+	        		mutationLst.add(0.1);
+	        		mutationLst.add(0.2);
+	        		mutationLst.add(0.3);
+	        		
+	        		for (List<SamplingAlgorithm> algorithms : algorithmsList) {
+	        			for (double elitism : elistismLst) {
+	        				for (double mutation : mutationLst) {
+	        					double start = System.currentTimeMillis();
+	        	        		
+	        					//IS_RANDOM
+	        					boolean random = false;
+	        					for (SamplingAlgorithm algorithm : algorithms) {
+	        						if (algorithm instanceof RandomSamplingLSA ||
+	        								algorithm instanceof RandomSamplingPairwise) {
+	        							
+	        							random = true;
+	        							
+	        						}
+	        					}
+	        					
+	        					String algorithmInitialPop = "";
+	        					if (algorithms.size() == 3) {
+	        						algorithmInitialPop = "LSA";
+	        					} else {
+	        						if (algorithms.get(0) instanceof TwiseSampling) {
+	        							algorithmInitialPop = "Pairwise";
+	        						} else if (algorithms.get(0) instanceof RandomSamplingLSA) {
+	        							algorithmInitialPop = "RandomSamplingLSA";
+	        						} else if (algorithms.get(0) instanceof RandomSamplingPairwise) {
+	        							algorithmInitialPop = "RandomSamplingPairwise";
+	        						}
+	        					}
+	        					
+	        					
+	        					System.out.print(algorithmInitialPop + "," + fileEntry.getAbsolutePath().split("bugs/")[1] + ","  + elitism + "," + mutation + ",");
+	        					
+	        	        		// ELITISM / MUTATION
+	        	        		new GA().runGA(algorithms, fileEntry, random, elitism, mutation);
+	        	        		double end = System.currentTimeMillis();
+	        	        		System.out.print((int)(end-start) + "\n");
+		        			}
+	        			}
+	        		}
+	        		
 	        	}
 	        }
 	    }
@@ -61,46 +136,19 @@ public class GA {
 	public void runGA(List<SamplingAlgorithm> algorithms, File file, boolean random, double elitismPercentage, double mutationPercentage) throws Exception {
 		
 		if (random) {
+			int size = 0;
 			
-			// LSA SIZE
-			/*int popSize[] = {
-				    6, 14, 14, 8, 62, 8, 14, 54, 8, 36, 36, 94, 286, 
-				    74, 74, 32, 6, 18, 6, 22, 38, 8, 100, 100, 6, 16, 
-				    8, 6, 16, 42, 12, 8, 4, 30, 20, 4, 8, 6, 6, 10, 34, 
-				    10, 10, 4, 4, 12, 6, 6, 16, 28, 72, 12, 20, 24, 6, 86, 
-				    14, 8, 4, 4, 4, 4, 78, 94, 98, 40, 6, 22, 10, 10, 8, 12, 
-				    10, 10, 10, 10, 10, 8, 6, 6, 10, 18, 14, 32, 48, 6, 6, 8, 
-				    12, 30, 32, 12, 6, 14, 18, 6, 14, 10, 8, 10, 6, 24, 6, 8, 
-				    10, 12, 6, 8, 38, 38, 26, 6, 8, 12, 40, 6, 12, 8, 10, 42, 
-				    10, 128, 38, 26, 42, 244, 10, 372, 372};*/
+			if (algorithms.get(0) instanceof RandomSamplingLSA) {
+				size = RandomSamplingLSA.popSize[GA.count];
+			} else if (algorithms.get(0) instanceof RandomSamplingPairwise) {
+				size = RandomSamplingPairwise.popSize[GA.count];
+			}
 			
-			// Pairwise
-			int popSize[] = {4, 6, 6, 4, 11, 4, 6, 10, 4, 10, 10, 11, 14, 
-				    11, 11, 8, 4, 6, 4, 8, 10, 4, 11, 11, 4, 6, 4, 4, 6, 10, 
-				    6, 4, 2, 8, 6, 2, 4, 4, 4, 6, 8, 6, 6, 2, 2, 6, 4, 4, 6, 
-				    8, 11, 6, 6, 8, 4, 11, 6, 4, 2, 2, 2, 2, 11, 11, 11, 10, 
-				    4, 8, 6, 6, 4, 6, 6, 6, 6, 6, 6, 4, 4, 4, 6, 6, 6, 8, 10, 
-				    4, 4, 4, 6, 8, 8, 6, 4, 6, 6, 4, 6, 6, 4, 6, 4, 8, 4, 4, 
-				    6, 6, 4, 4, 10, 10, 8, 4, 4, 6, 10, 4, 6, 4, 6, 10, 6, 12, 
-				    10, 8, 10, 14, 6, 15, 15
-				};
-			
-			RandomSampling randomSampling = new RandomSampling();
-			
-			int size = popSize[GA.count];
 			count++;
 			
-			//int size = 0;
-			/*for(int i = 0; i < algorithms.size(); i++) {
-				size += algorithms.get(i).getSamples(file).size();
-			}*/
-			
 			RandomSampling.NUMBER_CONFIGS = size;
-			algorithms.add(randomSampling);
 		} 
 		
-		
-
 		GeneticSamplingAlgorithm ga = new GeneticSamplingAlgorithm(algorithms);
 		List<List<String>> initialPopulation = null;
 		
