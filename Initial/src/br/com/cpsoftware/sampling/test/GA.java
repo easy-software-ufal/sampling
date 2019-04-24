@@ -129,6 +129,8 @@ public class GA {
 	        			}
 	        		}
 	        		
+	        		GA.count++;
+	        		
 	        	}
 	        }
 	    }
@@ -144,8 +146,6 @@ public class GA {
 			} else if (algorithms.get(0) instanceof RandomSamplingPairwise) {
 				size = RandomSamplingPairwise.popSize[GA.count];
 			}
-			
-			count++;
 			
 			RandomSampling.NUMBER_CONFIGS = size;
 		} 
