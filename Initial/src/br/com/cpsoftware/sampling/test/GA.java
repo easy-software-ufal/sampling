@@ -23,6 +23,7 @@ public class GA {
 	public static void main(String[] args) throws Exception {
 			
 		for (int i = 1; i <= 10; i++) {
+			GA.count = 0;
 			PrintStream fileOut = new PrintStream("exec-" + i + ".csv");
 			System.setOut(fileOut);
 			
